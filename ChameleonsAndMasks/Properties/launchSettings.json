@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ChameleonsAndMasks": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53362;http://localhost:53363"
+    }
+  }
+}
