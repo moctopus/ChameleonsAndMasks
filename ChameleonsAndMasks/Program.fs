@@ -7,6 +7,26 @@ let _hxGet = attr "hx-get"
 let _hxTarget = attr "hx-target"
 let _hxSwap = attr "hx-swap"
 
+let getPost id =
+    match id with
+    | "1" -> "some stuff"
+    | "2" -> "some other stuff"
+    | _ -> "error"
+
+let postsView (id: string) next (ctx: HttpContext) =
+    task {
+        let view =
+            div [] [
+                h2 [] [ str id ]
+                p [] [ str <| getPost id ]
+                a [ _hxGet $"/posts/{(int id) + 1}"; _hxTarget "#swapDiv"; _hxSwap "outerHtml" ] [
+                    str "Next"
+                ]
+            ]
+
+        return! htmlView view next ctx
+    }
+
 let tableView next (ctx: HttpContext) =
     task {
         let view =
@@ -46,10 +66,13 @@ let simpleView next (ctx: HttpContext) =
                 ]
                 body [] [
                     h1 [] [ str "View users" ]
-                    p [ _hxGet "/users"; _hxTarget "#showUsers"; _hxSwap "outerHtml" ] [
-                        str "Test"
+                    div [ _hxGet "/users"; _hxTarget "#swapDiv"; _hxSwap "outerHtml" ] [
+                        p [] [ str "Test" ]
                     ]
-                    div [ _id "showUsers" ] []
+                    div [ _hxGet "/posts/1"; _hxTarget "#swapDiv"; _hxSwap "outerHtml" ] [
+                        p [] [ str "Test" ]
+                    ]
+                    div [ _id "swapDiv" ] []
                 ]
             ]
 
@@ -58,7 +81,8 @@ let simpleView next (ctx: HttpContext) =
 
 let giraffe =
     choose [ GET >=> route "/" >=> simpleView
-             GET >=> route "/users" >=> tableView ]
+             GET >=> route "/users" >=> tableView
+             GET >=> routef "/posts/%s" postsView ]
 
 let builder = WebApplication.CreateBuilder()
 builder.Services.AddGiraffe() |> ignore
