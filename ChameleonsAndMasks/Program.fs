@@ -89,6 +89,6 @@ let builder = WebApplication.CreateBuilder()
 builder.Services.AddGiraffe() |> ignore
 
 let app = builder.Build()
-app.UseStaticFiles()
+app.UseStaticFiles() |> ignore
 app.UseGiraffe giraffe
 app.Run()
