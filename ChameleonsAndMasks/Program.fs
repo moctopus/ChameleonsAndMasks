@@ -63,6 +63,7 @@ let simpleView next (ctx: HttpContext) =
             html [] [
                 head [] [
                     script [ _src "https://unpkg.com/htmx.org@1.9.10" ] []
+                    link [_rel "stylesheet"; _href "/css/bulma.min.css"]
                 ]
                 body [] [
                     h1 [] [ str "View users" ]
@@ -88,5 +89,6 @@ let builder = WebApplication.CreateBuilder()
 builder.Services.AddGiraffe() |> ignore
 
 let app = builder.Build()
+app.UseStaticFiles()
 app.UseGiraffe giraffe
 app.Run()
