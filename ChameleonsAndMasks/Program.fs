@@ -92,3 +92,6 @@ let app = builder.Build()
 app.UseStaticFiles() |> ignore
 app.UseGiraffe giraffe
 app.Run()
+
+//consider a change to falco
+//Giraffe may become unsupported
