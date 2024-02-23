@@ -11,6 +11,7 @@ let getPost id =
     match id with
     | "1" -> "some stuff"
     | "2" -> "some other stuff"
+    | "3" -> "what was I doing?"
     | _ -> "error"
 
 let postsView (id: string) next (ctx: HttpContext) =
