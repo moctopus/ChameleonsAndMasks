@@ -7,6 +7,27 @@ open Falco.Markup.Svg
 open Falco.Markup
 open Falco.Htmx
 
+let getPost id =
+    match id with
+    | "1" -> "some stuff"
+    | "2" -> "some other stuff"
+    | "3" -> "what was I doing?"
+    | _ -> "error"
+
+let postsView : HttpHandler = fun ctx ->
+    let r = Request.getRoute ctx
+    let id = r.GetString "id"
+    let view = 
+        Elem.div [] [
+                Elem.h2 [] [ Text.raw id ]
+                Elem.p [] [ Text.raw <| getPost id ]
+                Elem.a [ Hx.get $"/posts/{(int id) + 1}"; Hx.target (Hx.Target.css "#swapDiv"); Hx.swap Hx.Swap.innerHTML ] [
+                    Text.raw "Next"
+                ]
+            ]
+    
+    Response.ofHtml view ctx
+
 let tableView : HttpHandler = 
     let view =
             Elem.table [] [
@@ -41,11 +62,11 @@ let htmlHandler : HttpHandler =
             ]
             Elem.body [] [
                 Elem.h1 [] [ Text.raw "View users" ]
-                Elem.div [ Hx.get "/users"; Hx.target (Hx.Target.css "#swapDiv"); Hx.swap Hx.Swap.outerHTML ] [
+                Elem.div [ Hx.get "/users"; Hx.target (Hx.Target.css "#swapDiv"); Hx.swap Hx.Swap.innerHTML ] [
                     Elem.p [] [ Text.raw "View users" ]
                 ]
-                Elem.div [ Hx.get "/posts/1"; Hx.target (Hx.Target.css "#swapDiv"); Hx.swap Hx.Swap.outerHTML ] [
-                    Elem.p [] [ Text.raw "Test" ]
+                Elem.div [ Hx.get "/posts/1"; Hx.target (Hx.Target.css "#swapDiv"); Hx.swap Hx.Swap.innerHTML ] [
+                    Elem.p [] [ Text.raw "Posts" ]
                 ]
                 Elem.div [ Attr.id "swapDiv" ] []
             ]
@@ -57,8 +78,9 @@ let htmlHandler : HttpHandler =
 let main args =
     webHost args {
         endpoints [
-            get "/" htmlHandler
+            get "/posts/{id:int}" postsView
             get "/users" tableView
+            get "/" htmlHandler
         ]
     }
     0
